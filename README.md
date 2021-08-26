@@ -11,9 +11,13 @@ Como os scripts do Parlametria executam o docker, para evitar de executar docker
 Para intalar basta fazer um pip install:
 ```bash
 pip install -r requirements.txt
+pip install -e .
 ```
 
-Após instalar os pacotes do pip execute o seguinte comando para fazer o settup do banco de dados:
+Após o install do pip sete a variável de ambiente necessária:
+- AIRFLOW_HOME: Variável de ambiente que indica para o airflow o caminho para a pasta do airflow local
+
+Em seguida fazer o settup do banco de dados:
 ```bash
 airflow db init
 ```

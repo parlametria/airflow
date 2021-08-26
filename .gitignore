@@ -2,8 +2,10 @@
 .vscode/
 __pycache__/
 logs/
+airflow_parlametria.egg-info/
 
 # Files
 *.pyc
 airflow.db
 airflow.cfg
+airflow-webserver.pid
