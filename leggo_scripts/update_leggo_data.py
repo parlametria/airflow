@@ -1,9 +1,8 @@
 from os import getcwd
 from dotenv import dotenv_values
 
-
 CURRENT_DIR = getcwd()
-PARLAMETRIA_DIR = CURRENT_DIR.replace("/airflow", "/")
+PARLAMETRIA_DIR = CURRENT_DIR.replace("/airflow_parlametria", "/")
 LEGGO_GERAL_ENV_VARS = dotenv_values(f"{PARLAMETRIA_DIR}leggo-geral/.env")
 
 
@@ -264,6 +263,77 @@ def process_leggo_data():
     """
 
 
-# process_orientacoes
-# process_disciplina
-# process_votacoes_sumarizadas
+def process_orientacoes():
+    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+
+    return f"""
+    docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
+       Rscript scripts/orientacoes/export_orientacoes.R \
+       -v {EXPORT_FOLDERPATH}/votacoes.csv \
+       -u {EXPORT_FOLDERPATH}/votos.csv \
+       -o {EXPORT_FOLDERPATH}/orientacoes.csv
+    """
+
+# TODO: Why there is fixed date in the script ? "2019-02-01" and "2022-12-31"
+def process_disciplina():
+    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+
+    return f"""
+    docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
+       Rscript scripts/disciplina/export_disciplina.R \
+       -v {EXPORT_FOLDERPATH}/votos.csv \
+       -o {EXPORT_FOLDERPATH}/orientacoes.csv \
+       -p {EXPORT_FOLDERPATH}/votacoes.csv \
+       -i "2019-02-01" \
+       -f "2022-12-31" \
+       -e {EXPORT_FOLDERPATH}/disciplina.csv
+    """
+
+
+def process_votacoes_sumarizadas():
+    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+
+    return f"""
+    docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
+       Rscript scripts/votacoes_sumarizadas/export_votacoes_sumarizadas.R \
+       -v {EXPORT_FOLDERPATH}/votos.csv \
+       -o {EXPORT_FOLDERPATH}/orientacoes.csv \
+       -p {EXPORT_FOLDERPATH}/votacoes.csv \
+       -i "2019-02-01" \
+       -f "2022-12-31" \
+       -e {EXPORT_FOLDERPATH}/votacoes_sumarizadas.csv
+    """
+
+def update_pautas():
+    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
+    PLS_FILEPATH = getvar("PLS_FILEPATH")
+    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+
+    return f"""
+        today=$(date +%Y-%m-%d)
+        lastweek=$(date -d '2 weeks ago' +%Y-%m-%d)
+        docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
+          Rscript scripts/fetch_agenda.R \
+          {PLS_FILEPATH} \
+          $lastweek $today \
+          {EXPORT_FOLDERPATH} \
+          {EXPORT_FOLDERPATH}/pautas.csv
+    """
+
+def keep_last_backups():
+    BACKUP_FOLDERPATH = getvar("BACKUP_FOLDERPATH")
+
+    return """
+    echo "=========================================="
+    echo "Mantendo apenas os últimos backups gerados"
+    echo "=========================================="
+
+    backups_to_keep=7
+    ls -lt """ + BACKUP_FOLDERPATH + """ | grep ^d | tail -n +$(($backups_to_keep + 1)) | awk '{print $9}' | while IFS= read -r f; do
+        echo "Removendo """ + BACKUP_FOLDERPATH + """
+        rm -rf """ + BACKUP_FOLDERPATH + """
+    done
+    """
