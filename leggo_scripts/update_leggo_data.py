@@ -1,26 +1,15 @@
-from os import getcwd
+from os import getcwd, getenv
 from dotenv import dotenv_values
 
+
 CURRENT_DIR = getcwd()
-PARLAMETRIA_DIR = CURRENT_DIR.replace("/airflow_parlametria", "/")
-LEGGO_GERAL_ENV_VARS = dotenv_values(f"{PARLAMETRIA_DIR}leggo-geral/.env")
-
-
-def getvar(varname: str) -> str:
-    """
-    Get env variable from leggo-geral
-    """
-    value = LEGGO_GERAL_ENV_VARS[varname]
-
-    if varname == "LEGGOR_FOLDERPATH":
-        return "".join([PARLAMETRIA_DIR, value.replace("./", "")])
-
-    return value
+PARLAMETRIA_DIR = "/".join(CURRENT_DIR.split("/")[:-1])
+LEGGO_GERAL_ENV_VARS = dotenv_values("".join([CURRENT_DIR, "/", ".env-leggo-geral"]))
 
 
 # Build do leggoR
 def build_leggor():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
 
     return f"""
     curr_branch=`git -C {LEGGOR_FOLDERPATH}/rcongresso rev-parse --abbrev-ref HEAD`
@@ -35,8 +24,8 @@ def build_leggor():
 
 # Processa dados de votações e votos na legislatura atual
 def process_votos():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     echo "Atualiza e processa dados de votos"
@@ -51,8 +40,8 @@ def process_votos():
 
 # Calcula o governismo com base nos votos nominais dos parlamentares
 def process_governismo():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     echo "Processando dados de Governismo"
@@ -67,8 +56,8 @@ def process_governismo():
 
 
 def setup_leggo_data_volume():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     # Copy props tables to volume
@@ -99,8 +88,8 @@ def setup_leggo_data_volume():
 
 
 def process_entidades():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -111,9 +100,9 @@ def process_entidades():
 
 
 def processa_pls_interesse():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
-    URL_INTERESSES = getvar("URL_INTERESSES")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
+    URL_INTERESSES = getenv("URL_INTERESSES")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -124,9 +113,9 @@ def processa_pls_interesse():
 
 
 def fetch_leggo_props():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
-    PLS_FILEPATH = getvar("PLS_FILEPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
+    PLS_FILEPATH = getenv("PLS_FILEPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -138,9 +127,9 @@ def fetch_leggo_props():
 
 
 def fetch_leggo_autores():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
-    PLS_FILEPATH = getvar("PLS_FILEPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
+    PLS_FILEPATH = getenv("PLS_FILEPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -153,9 +142,9 @@ def fetch_leggo_autores():
 
 
 def fetch_leggo_relatores():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
-    PLS_FILEPATH = getvar("PLS_FILEPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
+    PLS_FILEPATH = getenv("PLS_FILEPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -168,9 +157,9 @@ def fetch_leggo_relatores():
 
 
 def processa_interesses():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
-    URL_INTERESSES = getvar("URL_INTERESSES")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
+    URL_INTERESSES = getenv("URL_INTERESSES")
 
     return f"""
     echo "==============================="
@@ -185,8 +174,8 @@ def processa_interesses():
 
 
 def process_props_apensadas():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -198,9 +187,9 @@ def process_props_apensadas():
 
 
 def process_anotacoes():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
-    URL_LISTA_ANOTACOES = getvar("URL_LISTA_ANOTACOES")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
+    URL_LISTA_ANOTACOES = getenv("URL_LISTA_ANOTACOES")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -213,9 +202,9 @@ def process_anotacoes():
 
 
 def update_leggo_data():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
-    PLS_FILEPATH = getvar("PLS_FILEPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
+    PLS_FILEPATH = getenv("PLS_FILEPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -231,8 +220,8 @@ def update_leggo_data():
 
 
 def process_criterios():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -248,8 +237,8 @@ def process_criterios():
 
 # TODO: Why there is fixed date in the script ? "2019-01-31"
 def process_leggo_data():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -264,8 +253,8 @@ def process_leggo_data():
 
 
 def process_orientacoes():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -275,10 +264,11 @@ def process_orientacoes():
        -o {EXPORT_FOLDERPATH}/orientacoes.csv
     """
 
+
 # TODO: Why there is fixed date in the script ? "2019-02-01" and "2022-12-31"
 def process_disciplina():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -293,8 +283,8 @@ def process_disciplina():
 
 
 def process_votacoes_sumarizadas():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
     docker-compose -f {LEGGOR_FOLDERPATH}/docker-compose.yml run --rm rmod \
@@ -307,10 +297,11 @@ def process_votacoes_sumarizadas():
        -e {EXPORT_FOLDERPATH}/votacoes_sumarizadas.csv
     """
 
+
 def update_pautas():
-    LEGGOR_FOLDERPATH = getvar("LEGGOR_FOLDERPATH")
-    PLS_FILEPATH = getvar("PLS_FILEPATH")
-    EXPORT_FOLDERPATH = getvar("EXPORT_FOLDERPATH")
+    LEGGOR_FOLDERPATH = getenv("LEGGOR_FOLDERPATH")
+    PLS_FILEPATH = getenv("PLS_FILEPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     return f"""
         today=$(date +%Y-%m-%d)
@@ -323,17 +314,26 @@ def update_pautas():
           {EXPORT_FOLDERPATH}/pautas.csv
     """
 
-def keep_last_backups():
-    BACKUP_FOLDERPATH = getvar("BACKUP_FOLDERPATH")
 
-    return """
+def keep_last_backups():
+    BACKUP_FOLDERPATH = getenv("BACKUP_FOLDERPATH")
+
+    return (
+        """
     echo "=========================================="
     echo "Mantendo apenas os últimos backups gerados"
     echo "=========================================="
 
     backups_to_keep=7
-    ls -lt """ + BACKUP_FOLDERPATH + """ | grep ^d | tail -n +$(($backups_to_keep + 1)) | awk '{print $9}' | while IFS= read -r f; do
-        echo "Removendo """ + BACKUP_FOLDERPATH + """
-        rm -rf """ + BACKUP_FOLDERPATH + """
+    ls -lt """
+        + BACKUP_FOLDERPATH
+        + """ | grep ^d | tail -n +$(($backups_to_keep + 1)) | awk '{print $9}' | while IFS= read -r f; do
+        echo "Removendo """
+        + BACKUP_FOLDERPATH
+        + """
+        rm -rf """
+        + BACKUP_FOLDERPATH
+        + """
     done
     """
+    )

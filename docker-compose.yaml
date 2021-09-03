@@ -11,6 +11,7 @@ x-airflow-common:
   volumes:
     - .:/airflow
     - "/var/run/docker.sock:/var/run/docker.sock" # We will pass the Docker Deamon as a volume to allow the webserver containers start docker images. Ref: https://stackoverflow.com/q/51342810/7024760
+    - leggo_data:/leggo_data
 
 services:
   webserver:
@@ -34,3 +35,7 @@ services:
       interval: 15s
       timeout: 15s
       retries: 2
+
+volumes:
+  leggo_data:
+      name: leggo_data
