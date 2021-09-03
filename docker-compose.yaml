@@ -5,7 +5,7 @@ x-airflow-common:
   build:
     context: .
     dockerfile: docker/Dockerfile.dev
-  env_file: .env-leggo-geral
+  env_file: .env
   environment:
     - AIRFLOW_HOME=/airflow
   volumes:
