@@ -1,12 +1,5 @@
 SHELL := /bin/bash
 
-# =========================== LOCAL ENV COMMANDS ===============================
-local-webserver:
-	airflow webserver --port 8080
-
-local-scheduler:
-	airflow scheduler
-
 # =========================== DEV DOCKER ENV COMMANDS ===============================
 dev-build:
 	docker-compose build
