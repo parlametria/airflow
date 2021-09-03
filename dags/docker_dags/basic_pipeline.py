@@ -5,17 +5,17 @@ from airflow.operators.dummy_operator import DummyOperator
 
 from docker.types import Mount
 
-from .setup_leggo_data_volume import setup_leggo_data_volume_tasks
-from .process_entidades import process_entidades_tasks
-from .processa_pls_interesse import processa_pls_interesse_tasks
-from .fetch_leggo_props import fetch_leggo_props_tasks
-from .fetch_leggo_autores import fetch_leggo_autores_tasks
-from .fetch_leggo_relatores import fetch_leggo_relatores_tasks
-from .process_props_apensadas import process_props_apensadas_tasks
-from .process_anotacoes import process_anotacoes_tasks
-from .update_leggo_data import update_leggo_data_tasks
-from .process_criterios import process_criterios_tasks
-from .process_leggo_data import process_leggo_data_tasks
+from tasks.setup_leggo_data_volume import setup_leggo_data_volume_tasks
+from tasks.process_entidades import process_entidades_tasks
+from tasks.processa_pls_interesse import processa_pls_interesse_tasks
+from tasks.fetch_leggo_props import fetch_leggo_props_tasks
+from tasks.fetch_leggo_autores import fetch_leggo_autores_tasks
+from tasks.fetch_leggo_relatores import fetch_leggo_relatores_tasks
+from tasks.process_props_apensadas import process_props_apensadas_tasks
+from tasks.process_anotacoes import process_anotacoes_tasks
+from tasks.update_leggo_data import update_leggo_data_tasks
+from tasks.process_criterios import process_criterios_tasks
+from tasks.process_leggo_data import process_leggo_data_tasks
 
 default_args = {
     "owner": "airflow",
