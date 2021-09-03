@@ -1,7 +1,18 @@
 SHELL := /bin/bash
 
-webserver:
-	airflow webserver --port 8080
+# =========================== DEV DOCKER ENV COMMANDS ===============================
+dev-build:
+	docker-compose build
 
-scheduler:
-	airflow scheduler
+dev-webserver:
+	docker-compose up -d webserver
+
+dev-scheduler:
+	docker-compose up -d scheduler
+
+dev-bash:
+	docker-compose run webserver /bin/bash
+
+dev-up:
+	make dev-webserver
+	make dev-scheduler

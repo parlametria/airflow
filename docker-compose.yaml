@@ -1,0 +1,41 @@
+---
+version: '3.5'
+x-airflow-common:
+  &airflow-common
+  build:
+    context: .
+    dockerfile: docker/Dockerfile.dev
+  env_file: .env
+  environment:
+    - AIRFLOW_HOME=/airflow
+  volumes:
+    - .:/airflow
+    - "/var/run/docker.sock:/var/run/docker.sock" # We will pass the Docker Deamon as a volume to allow the webserver containers start docker images. Ref: https://stackoverflow.com/q/51342810/7024760
+    - leggo_data:/leggo_data
+
+services:
+  webserver:
+    <<: *airflow-common
+    command: airflow webserver --port 8080
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 15s
+      retries: 2
+
+  scheduler:
+    <<: *airflow-common
+    command: airflow scheduler
+    ports:
+      - 8793:8793
+    healthcheck:
+      test: ["CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"']
+      interval: 15s
+      timeout: 15s
+      retries: 2
+
+volumes:
+  leggo_data:
+      name: leggo_data

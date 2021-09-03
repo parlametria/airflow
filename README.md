@@ -4,25 +4,29 @@ Esse README irá descrever como fazer o settup do ambiente do airflow.
 
 ## Settup ambiente de desenvolvimento
 
-Como os scripts do Parlametria executam o docker, para evitar de executar docker dentro de docker o ambiente do airflow é local, porém é recomendo a utilização de uma ferramenta para gerenciar ambientes python como [pyenv](https://github.com/pyenv/pyenv) por exemplo.
+É utilizado o docker e docker-compose para a execução do airflow:
+- Instalação do docker: https://docs.docker.com/engine/install/ubuntu/
+- Instalação do docker-compose: https://docs.docker.com/compose/install/
 
 ### Instalação
 
+Tendo o docker o docker-compose instaladados para fazer a build basta fazer:
+
 Para intalar basta fazer um pip install:
 ```bash
-pip install -r requirements.txt
-pip install -e .
+make dev-build
 ```
 
-Após o install do pip sete a variável de ambiente necessária:
-- AIRFLOW_HOME: Variável de ambiente que indica para o airflow o caminho para a pasta do airflow local
-
-Em seguida fazer o settup do banco de dados:
+Em seguida, para fazer o settup do banco de dados:
+```bash
+make dev-bash
+```
+Estando dentro do container execute:
 ```bash
 airflow db init
 ```
 
-E após os settup do banco, crie um usuário admin:
+Após o settup do banco, ainda dentro do container, crie um usuário admin:
 ```bash
 airflow users create \
     --username admin \
@@ -34,7 +38,7 @@ airflow users create \
 
 ## Utilização
 
-Com o seu ambiente devidamente preparado, para executar o airflow mas utilizar os comandos do Makefile: `make webserver` e `make scheduler`.
+Com o seu ambiente devidamente preparado, para executar o airflow mas utilizar os comandos do Makefile: `make dev-webserver` para o webserver e `make dev-scheduler` para o scheduler, caso queira executar ambos tem o comando `make dev-up`.
 
 - make webserver: aplicação web que possibilita o gerenciamento das Dags.
 - make scheduler: serviço que busca por novas Dags na pasta dags e também é responsável por executar-las de acordo com o settup do `schedule_interval` e `start_date` de cada Dag.
