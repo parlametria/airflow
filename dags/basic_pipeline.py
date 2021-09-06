@@ -31,7 +31,7 @@ default_args = {
 with DAG(
     "docker_basic_pipeline",
     default_args=default_args,
-    schedule_interval="@daily",
+    schedule_interval="30 20 * * *",
     catchup=False,
 ) as dag:
     start_dag = DummyOperator(task_id="start_dag")
