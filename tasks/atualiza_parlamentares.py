@@ -1,6 +1,6 @@
 from os import getenv
 from typing import List
-from airflow.operators.docker_operator import DockerOperator
+from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
