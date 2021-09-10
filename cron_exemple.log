@@ -17,6 +17,17 @@ Portados para o airflow como dags:
     # Generate backup Leggo data 7:30 UTC
       30 7  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -generate-backup; /home/parlametria/leggo-geral/update_leggo_data.sh -keep-last-backups
 
+    # Update anotações every hour
+    #  0 *  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-anotacoes
+
+    # Update parlamentares every friday at 12:00 UTC
+    0 12  *   *  5    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -atualiza-parlamentares
+
+    # Process entidades every saturday at 12:00 UTC
+    0 12  *   *   6    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-entidades
+
+    # Run tweets fetcher 22:00 UTC
+    0 22  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-tweets
 
 
 Ainda não portados para o airflow:
@@ -27,23 +38,11 @@ Ainda não portados para o airflow:
     # Update Heroku-Prod Leggo data 10:30 UTC
       30 10  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -update-db-prod
 
-    # Update anotações every hour
-    #  0 *  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-anotacoes
-
     # Update db dev de anotações every hour at minute 20
     #  20 *  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -update-db-insights-dev
 
     # Update db prod de anotações every hour at minute 40
     #  40 *  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -update-db-insights-prod
-
-    # Update parlamentares every friday at 12:00 UTC
-      0 12  *   *  5    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -atualiza-parlamentares
-
-    # Process entidades every saturday at 12:00 UTC
-      0 12  *   *   6    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-entidades
-
-    # Run tweets fetcher 22:00 UTC
-      0 22  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-tweets
 
     # Run twitter pipeline staging 5:00 UTC
       0 5  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -run-pipeline-twitter staging
