@@ -6,6 +6,9 @@ from docker.types import Mount
 
 def keep_last_backups_tasks(mounts: List[Mount]) -> List[DockerOperator]:
     BACKUP_FOLDERPATH = getenv("BACKUP_FOLDERPATH")
+    EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
+
+    backups_to_keep = 8 # it was 7 + 1 on the orignal script
 
     t1 = DockerOperator(
         task_id="task_keep_last_backups",
@@ -17,14 +20,10 @@ def keep_last_backups_tasks(mounts: List[Mount]) -> List[DockerOperator]:
         network_mode="bridge",
         mounts=mounts,
         command=f"""
-        backups_to_keep=7
-        ls -lt {BACKUP_FOLDERPATH} \
-            | grep ^d \
-            | tail -n +$(($backups_to_keep + 1)) \
-            | awk """ + "'{print $9}'" + f""" \
-            | while IFS= read -r f; do \
-                echo 'Removendo ' {BACKUP_FOLDERPATH} \
-                rm -rf {BACKUP_FOLDERPATH}
+        ls -lt {EXPORT_FOLDERPATH}/backups | grep ^d | tail -n {backups_to_keep} | awk """ + "'{print $9}'" + f""" | while IFS= read -r f; do
+                echo 'Removendo backups'
+                rm -rf {EXPORT_FOLDERPATH}/backups
+        done
         """,
     )
 
