@@ -26,7 +26,7 @@ with DAG(
 ) as dag:
     start_dag = DummyOperator(task_id="start_dag")
     end_dag = DummyOperator(task_id="end_dag")
-    mounts = [Mount("/agora-digital/leggo_data", "leggo_data")]
+    mounts = [Mount("/leggo-trends/leggo_data", "leggo_data")]
 
     tasks = [
         *process_pressao_tasks(mounts)
