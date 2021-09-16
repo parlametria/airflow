@@ -30,6 +30,18 @@ Portados para o airflow como dags:
     0 22  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-tweets
 
 
+    # Run twitter pipeline staging 5:00 UTC
+      0 5  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -run-pipeline-twitter staging
+
+    # Run twitter pipeline production 6:00 UTC
+      0 6  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -run-pipeline-twitter production
+
+    # Run pressao pipeline 7:00 UTC
+      0 7  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-pressao
+
+
+
+
 Ainda não portados para o airflow:
 
     # Update Heroku-Dev Leggo data 10:00 UTC
@@ -44,14 +56,6 @@ Ainda não portados para o airflow:
     # Update db prod de anotações every hour at minute 40
     #  40 *  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -update-db-insights-prod
 
-    # Run twitter pipeline staging 5:00 UTC
-      0 5  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -run-pipeline-twitter staging
-
-    # Run twitter pipeline production 6:00 UTC
-      0 6  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -run-pipeline-twitter production
-
-    # Run pressao pipeline 7:00 UTC
-      0 7  *   *   *    cd /home/parlametria/leggo-geral; git pull; /home/parlametria/leggo-geral/update_leggo_data.sh -process-pressao
 
     # Update perfil-parlametar-dados 9:00 UTC at Tuesday
       0 9   *   *   2    cd /home/parlametria/perfil-parlamentar-dados; git pull origin master
