@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def processa_pls_interesse_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def processa_pls_interesse_tasks(mounts: List[Mount],**extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
     URL_INTERESSES = getenv("URL_INTERESSES")
 
@@ -22,6 +22,7 @@ def processa_pls_interesse_tasks(mounts: List[Mount]) -> List[DockerOperator]:
                 -u {URL_INTERESSES} \
                 -e {EXPORT_FOLDERPATH}/pls_interesses.csv
         """,
+        **extraoptions,
     )
 
     return [t1]

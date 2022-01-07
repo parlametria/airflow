@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def update_leggo_data_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def update_leggo_data_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
     PLS_FILEPATH = getenv("PLS_FILEPATH")
 
@@ -22,6 +22,7 @@ def update_leggo_data_tasks(mounts: List[Mount]) -> List[DockerOperator]:
                 -p {PLS_FILEPATH} \
                 -e {EXPORT_FOLDERPATH} -c camara
         """,
+        **extraoptions,
     )
 
     t2 = DockerOperator(
@@ -38,6 +39,7 @@ def update_leggo_data_tasks(mounts: List[Mount]) -> List[DockerOperator]:
                 -p {PLS_FILEPATH} \
                 -e {EXPORT_FOLDERPATH} -c senado
         """,
+        **extraoptions,
     )
 
     return [t1, t2]

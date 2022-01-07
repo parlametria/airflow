@@ -6,7 +6,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def process_pressao_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def process_pressao_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     #build_leggo_trends() {
     #    curr_branch=`git -C $LEGGOTRENDS_FOLDERPATH rev-parse --abbrev-ref HEAD`
     #    git -C $LEGGOTRENDS_FOLDERPATH pull origin $curr_branch
@@ -38,6 +38,7 @@ def process_pressao_tasks(mounts: List[Mount]) -> List[DockerOperator]:
             -f {today} \
             -o {EXPORT_FOLDERPATH}/tweets_proposicoes.csv
         """,
+        **extraoptions,
     )
 
     t2 = DockerOperator(
@@ -57,6 +58,7 @@ def process_pressao_tasks(mounts: List[Mount]) -> List[DockerOperator]:
             -p {EXPORT_FOLDERPATH}/proposicoes.csv \
             -o {EXPORT_FOLDERPATH}/pressao.csv
         """,
+        **extraoptions,
     )
 
     return [t1, t2]

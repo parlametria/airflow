@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def process_leggo_data_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def process_leggo_data_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     t1 = DockerOperator(
@@ -25,6 +25,7 @@ def process_leggo_data_tasks(mounts: List[Mount]) -> List[DockerOperator]:
             -o {EXPORT_FOLDERPATH} \
             -e {EXPORT_FOLDERPATH}/entidades.csv
         """,
+        **extraoptions,
     )
 
     return [t1]

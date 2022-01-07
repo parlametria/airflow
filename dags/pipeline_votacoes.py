@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.dummy_operator import DummyOperator
-
 from docker.types import Mount
 
 from tasks.process_votos import process_votos_tasks
@@ -11,6 +9,7 @@ from tasks.process_orientacoes import process_orientacoes_tasks
 from tasks.process_disciplina import process_disciplina_tasks
 from tasks.process_votacoes_sumarizadas import process_votacoes_sumarizadas_tasks
 
+from dags import execute_tasks_in_sequence
 
 default_args = {
     "owner": "airflow",
@@ -29,21 +28,15 @@ with DAG(
     schedule_interval="0 21 * * 5",
     catchup=False,
 ) as dag:
-    start_dag = DummyOperator(task_id="start_dag")
-    end_dag = DummyOperator(task_id="end_dag")
     mounts = [Mount("/agora-digital/leggo_data", "leggo_data")]
+    tasks_args = {'mounts': mounts, 'trigger_rule': 'all_done'}
 
     tasks = [
-        *process_votos_tasks(mounts),
-        *process_governismo_tasks(mounts),
-        *process_orientacoes_tasks(mounts),
-        *process_disciplina_tasks(mounts),
-        *process_votacoes_sumarizadas_tasks(mounts),
+        *process_votos_tasks(**tasks_args),
+        *process_governismo_tasks(**tasks_args),
+        *process_orientacoes_tasks(**tasks_args),
+        *process_disciplina_tasks(**tasks_args),
+        *process_votacoes_sumarizadas_tasks(**tasks_args),
     ]
 
-    current_task = start_dag
-    for task in tasks:
-        current_task >> task
-        current_task = task
-
-    current_task >> end_dag
+    execute_tasks_in_sequence(tasks)

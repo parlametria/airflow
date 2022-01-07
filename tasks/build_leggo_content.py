@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def build_leggo_content_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def build_leggo_content_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     #EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
     #PLS_FILEPATH = getenv("PLS_FILEPATH")
     #

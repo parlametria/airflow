@@ -2,11 +2,12 @@ from datetime import datetime, timedelta
 from os import getenv
 
 from airflow import DAG
-from airflow.operators.dummy_operator import DummyOperator
 
 from docker.types import Mount
 
-from tasks.process_twitter import process_twitter_tasks_development
+from tasks.process_twitter import r_export_tweets_to_process_task, process_twitter_tasks_development
+
+from dags import execute_tasks_in_sequence
 
 LEGGOTWITTER_DADOS_FOLDERPATH = getenv("LEGGOTWITTER_DADOS_FOLDERPATH")
 
@@ -27,19 +28,15 @@ with DAG(
     schedule_interval=None,
     catchup=False,
 ) as dag:
-    start_dag = DummyOperator(task_id="start_dag")
-    end_dag = DummyOperator(task_id="end_dag")
     mounts = [
-        Mount("/leggo-twitter-dados/data", "leggo_twitter_dados_data"), # /data:/leggo-twitter-dados/data
+        # /data:/leggo-twitter-dados/data
+        Mount("/leggo-twitter-dados/data", "leggo_twitter_dados_data"),
     ]
+    tasks_args = {'mounts': mounts, 'trigger_rule': 'all_done'}
 
     tasks = [
-        *process_twitter_tasks_development(mounts),
+        *r_export_tweets_to_process_task(**tasks_args),
+        *process_twitter_tasks_development(**tasks_args),
     ]
 
-    current_task = start_dag
-    for task in tasks:
-        current_task >> task
-        current_task = task
-
-    current_task >> end_dag
+    execute_tasks_in_sequence(tasks)

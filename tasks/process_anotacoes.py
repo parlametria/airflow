@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def process_anotacoes_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def process_anotacoes_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
     URL_LISTA_ANOTACOES = getenv("URL_LISTA_ANOTACOES")
 
@@ -24,6 +24,7 @@ def process_anotacoes_tasks(mounts: List[Mount]) -> List[DockerOperator]:
                 -p {EXPORT_FOLDERPATH}/proposicoes.csv \
                 -e {EXPORT_FOLDERPATH}
         """,
+        **extraoptions,
     )
 
     return [t1]

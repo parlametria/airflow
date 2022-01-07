@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def atualiza_parlamentares_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def atualiza_parlamentares_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     t1 = DockerOperator(
@@ -20,6 +20,7 @@ def atualiza_parlamentares_tasks(mounts: List[Mount]) -> List[DockerOperator]:
         Rscript scripts/parlamentares/update_parlamentares.R \
             -p {EXPORT_FOLDERPATH}
         """,
+        **extraoptions
     )
 
     return [t1]

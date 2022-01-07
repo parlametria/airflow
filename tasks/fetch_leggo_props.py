@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def fetch_leggo_props_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def fetch_leggo_props_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
     PLS_FILEPATH = getenv("PLS_FILEPATH")
 
@@ -23,6 +23,7 @@ def fetch_leggo_props_tasks(mounts: List[Mount]) -> List[DockerOperator]:
                 -e {EXPORT_FOLDERPATH} \
                 -f 2
         """,
+        **extraoptions,
     )
 
     return [t1]

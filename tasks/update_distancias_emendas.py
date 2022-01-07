@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def update_distancias_emendas_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def update_distancias_emendas_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     t1 = DockerOperator(
@@ -23,6 +23,7 @@ def update_distancias_emendas_tasks(mounts: List[Mount]) -> List[DockerOperator]
             {EXPORT_FOLDERPATH}/novas_emendas.csv \
             {EXPORT_FOLDERPATH}/emendas.csv
         """,
+        **extraoptions,
     )
 
     return [t1]

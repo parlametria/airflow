@@ -5,7 +5,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 from docker.types import Mount
 
 
-def setup_leggo_data_volume_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def setup_leggo_data_volume_tasks(mounts: List[Mount],**extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     t1 = DockerOperator(
@@ -22,6 +22,7 @@ def setup_leggo_data_volume_tasks(mounts: List[Mount]) -> List[DockerOperator]:
                 inst/extdata/tabela_geral_ids_casa_new.csv \
                 {EXPORT_FOLDERPATH}
         """,
+        **extraoptions,
     )
 
     t2 = DockerOperator(
@@ -37,6 +38,7 @@ def setup_leggo_data_volume_tasks(mounts: List[Mount]) -> List[DockerOperator]:
             mkdir -p {EXPORT_FOLDERPATH}/camara \
                         {EXPORT_FOLDERPATH}/senado
         """,
+        **extraoptions,
     )
 
     t3 = DockerOperator(
@@ -52,6 +54,7 @@ def setup_leggo_data_volume_tasks(mounts: List[Mount]) -> List[DockerOperator]:
             cp inst/extdata/camara/parlamentares.csv \
                 {EXPORT_FOLDERPATH}/camara/parlamentares.csv
         """,
+        **extraoptions,
     )
 
     t4 = DockerOperator(
@@ -67,6 +70,7 @@ def setup_leggo_data_volume_tasks(mounts: List[Mount]) -> List[DockerOperator]:
             cp inst/extdata/senado/parlamentares.csv \
                 {EXPORT_FOLDERPATH}/senado/parlamentares.csv
         """,
+        **extraoptions,
     )
 
     t5 = DockerOperator(
@@ -82,6 +86,7 @@ def setup_leggo_data_volume_tasks(mounts: List[Mount]) -> List[DockerOperator]:
             cp inst/extdata/parlamentares.csv \
                 {EXPORT_FOLDERPATH}/parlamentares.csv
         """,
+        **extraoptions,
     )
 
     return [t1, t2, t3, t4, t5]

@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def keep_last_backups_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def keep_last_backups_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     BACKUP_FOLDERPATH = getenv("BACKUP_FOLDERPATH")
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
@@ -25,6 +25,7 @@ def keep_last_backups_tasks(mounts: List[Mount]) -> List[DockerOperator]:
                 rm -rf {EXPORT_FOLDERPATH}/backups
         done
         """,
+        **extraoptions,
     )
 
     return [t1]

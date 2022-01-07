@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def process_tweets_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def process_tweets_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     LEGGOTWITTER_FOLDERPATH = getenv("LEGGOTWITTER_FOLDERPATH")
     URL_USERNAMES_TWITTER = getenv("URL_USERNAMES_TWITTER")
 
@@ -22,6 +22,7 @@ def process_tweets_tasks(mounts: List[Mount]) -> List[DockerOperator]:
        -f {LEGGOTWITTER_FOLDERPATH}/docker-compose.override.yml \
        run --no-deps --rm crawler-twitter-service \
        sh -c "python manage.py process-tweets -l '""" + URL_USERNAMES_TWITTER + "\"'",
+       **extraoptions,
     )
 
     return [t1]

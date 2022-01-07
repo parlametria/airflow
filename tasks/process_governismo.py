@@ -4,7 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 
 from docker.types import Mount
 
-def process_governismo_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def process_governismo_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     EXPORT_FOLDERPATH = getenv("EXPORT_FOLDERPATH")
 
     t1 = DockerOperator(
@@ -24,6 +24,7 @@ def process_governismo_tasks(mounts: List[Mount]) -> List[DockerOperator]:
             -f "2022-12-31" \
             -e {EXPORT_FOLDERPATH}/governismo.csv
         """,
+        **extraoptions,
     )
 
     return [t1]

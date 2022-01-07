@@ -7,7 +7,7 @@ from docker.types import Mount
 ## DEPRECATED
 #  leggo-geral/README.md
 # 37:- [leggo-content](https://github.com/parlametria/leggo-content) (deprecated)
-def process_leggo_content_tasks(mounts: List[Mount]) -> List[DockerOperator]:
+def process_leggo_content_tasks(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
     #LEGGOCONTENT_FOLDERPATH = getenv("LEGGOCONTENT_FOLDERPATH")
     #
     #t1 = DockerOperator(

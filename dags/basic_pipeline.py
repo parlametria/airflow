@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.dummy_operator import DummyOperator
-
 from docker.types import Mount
 
 from tasks.setup_leggo_data_volume import setup_leggo_data_volume_tasks
@@ -16,6 +14,8 @@ from tasks.process_anotacoes import process_anotacoes_tasks
 from tasks.update_leggo_data import update_leggo_data_tasks
 from tasks.process_criterios import process_criterios_tasks
 from tasks.process_leggo_data import process_leggo_data_tasks
+
+from dags import execute_tasks_in_sequence
 
 default_args = {
     "owner": "airflow",
@@ -34,27 +34,21 @@ with DAG(
     schedule_interval="30 20 * * *",
     catchup=False,
 ) as dag:
-    start_dag = DummyOperator(task_id="start_dag")
-    end_dag = DummyOperator(task_id="end_dag")
     mounts = [Mount("/agora-digital/leggo_data", "leggo_data")]
+    tasks_args = {'mounts': mounts, 'trigger_rule': 'all_done'}
 
     tasks = [
-        *setup_leggo_data_volume_tasks(mounts),
-        *process_entidades_tasks(mounts),
-        *processa_pls_interesse_tasks(mounts),
-        *fetch_leggo_props_tasks(mounts),
-        *fetch_leggo_autores_tasks(mounts),
-        *fetch_leggo_relatores_tasks(mounts),
-        *process_props_apensadas_tasks(mounts),
-        *process_anotacoes_tasks(mounts),
-        *update_leggo_data_tasks(mounts),
-        *process_criterios_tasks(mounts),
-        *process_leggo_data_tasks(mounts),
+        *setup_leggo_data_volume_tasks(**tasks_args),
+        *process_entidades_tasks(**tasks_args),
+        *processa_pls_interesse_tasks(**tasks_args),
+        *fetch_leggo_props_tasks(**tasks_args),
+        *fetch_leggo_autores_tasks(**tasks_args),
+        *fetch_leggo_relatores_tasks(**tasks_args),
+        *process_props_apensadas_tasks(**tasks_args),
+        *process_anotacoes_tasks(**tasks_args),
+        *update_leggo_data_tasks(**tasks_args),
+        *process_criterios_tasks(**tasks_args),
+        *process_leggo_data_tasks(**tasks_args),
     ]
 
-    current_task = start_dag
-    for task in tasks:
-        current_task >> task
-        current_task = task
-
-    current_task >> end_dag
+    execute_tasks_in_sequence(tasks)

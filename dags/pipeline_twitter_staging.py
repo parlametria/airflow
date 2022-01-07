@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.dummy_operator import DummyOperator
 
 from docker.types import Mount
 
 from tasks.process_twitter import process_twitter_tasks_staging
 
+from dags import execute_tasks_in_sequence
 
 default_args = {
     "owner": "airflow",
@@ -22,20 +22,14 @@ default_args = {
 with DAG(
     "pipeline_twitter_staging",
     default_args=default_args,
-    schedule_interval="0 5 * * *", # Run twitter pipeline staging 5:00 UTC
+    schedule_interval="0 5 * * *",  # Run twitter pipeline staging 5:00 UTC
     catchup=False,
 ) as dag:
-    start_dag = DummyOperator(task_id="start_dag")
-    end_dag = DummyOperator(task_id="end_dag")
     mounts = [Mount("/agora-digital/leggo_data", "leggo_data")]
+    tasks_args = {'mounts': mounts, 'trigger_rule': 'all_done'}
 
     tasks = [
-        *process_twitter_tasks_staging(mounts),
+        *process_twitter_tasks_staging(**tasks_args),
     ]
 
-    current_task = start_dag
-    for task in tasks:
-        current_task >> task
-        current_task = task
-
-    current_task >> end_dag
+    execute_tasks_in_sequence(tasks)
