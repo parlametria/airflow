@@ -9,7 +9,8 @@ from tasks.process_twitter import r_export_tweets_to_process_task, process_twitt
 
 from dags import execute_tasks_in_sequence
 
-LEGGOTWITTER_DADOS_FOLDERPATH = getenv("LEGGOTWITTER_DADOS_FOLDERPATH")
+LEGGOTWITTER_FOLDERPATH = getenv("LEGGOTWITTER_FOLDERPATH")
+URL_USERNAMES_TWITTER = getenv("URL_USERNAMES_TWITTER")
 
 default_args = {
     "owner": "airflow",
@@ -30,9 +31,16 @@ with DAG(
 ) as dag:
     mounts = [
         # /data:/leggo-twitter-dados/data
-        Mount("/leggo-twitter-dados/data", "leggo_twitter_dados_data"),
+        Mount("/leggo-twitter-dados/data", f"{LEGGOTWITTER_FOLDERPATH}/data", type="bind"),
     ]
-    tasks_args = {'mounts': mounts, 'trigger_rule': 'all_done'}
+
+    tasks_args = {
+        'mounts': mounts,
+        'trigger_rule': 'all_done',
+        'environment': {
+            'URL_USERNAMES_TWITTER': URL_USERNAMES_TWITTER
+        }
+    }
 
     tasks = [
         *r_export_tweets_to_process_task(**tasks_args),
