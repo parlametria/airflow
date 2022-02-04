@@ -29,7 +29,7 @@ default_args = {
 }
 
 with DAG(
-    "docker_basic_pipeline",
+    "basic_pipeline",
     default_args=default_args,
     schedule_interval="30 20 * * *",
     catchup=False,
