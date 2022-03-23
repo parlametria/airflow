@@ -8,3 +8,4 @@ airflow_parlametria.egg-info/
 *.pyc
 airflow.db
 airflow-webserver.pid
+.env
