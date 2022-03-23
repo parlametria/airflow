@@ -6,6 +6,22 @@ from docker.types import Mount
 
 
 def r_export_tweets_to_process_task(mounts: List[Mount], **extraoptions) -> List[DockerOperator]:
+    #t0 = DockerOperator(
+    #    task_id="task_r_export_tweets_to_process_t0",
+    #    # image="crawler-leggo-twitter-image",
+    #    image="r-leggo-twitter-image",
+    #    container_name="r_export_tweets_to_process_t0",
+    #    api_version="auto",
+    #    auto_remove=True,
+    #    docker_url="unix://var/run/docker.sock",
+    #    network_mode="leggo_twitter_network",
+    #    mounts=mounts,
+    #    command="""
+    #        sleep 500
+    #    """,
+    #    **extraoptions,
+    #)
+    #
     t1 = DockerOperator(
         task_id="task_r_export_tweets_to_process_t1",
         # image="crawler-leggo-twitter-image",
