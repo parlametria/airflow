@@ -8,8 +8,8 @@ WORKDIR /airflow
 
 RUN pip install --upgrade pip
 
-COPY requirements.txt /airflow/
+COPY requirements /airflow/
 COPY . /airflow/
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements/prod.txt
 RUN pip install -e .
