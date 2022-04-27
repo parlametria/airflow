@@ -6,7 +6,7 @@ from airflow import DAG
 
 from docker.types import Mount
 
-from tasks.process_new_tweets import process_new_tweets_tasks
+from tasks.process_new_tweets.process_new_tweets import process_new_tweets_tasks
 from dags import execute_tasks_in_sequence
 
 default_args = {
@@ -26,18 +26,29 @@ with DAG(
     schedule_interval="0 22 * * *",  # Run tweets fetcher 22:00 UTC
     catchup=False,
 ) as dag:
-    twitter_credentials = dotenv_values(f"/airflow/.env.twitter-crentials")
+    TWITTER_CREDENTIALS = dotenv_values(f"/airflow/.env.twitter-crentials")
 
+    NEW_TWEETS_FOLDERPATH = getenv("NEW_TWEETS_FOLDERPATH")
+
+    # folder = "./tweets"
     mounts = [
         # Mount("/agora-digital/leggo_data", "leggo_data"),
-        Mount(f"./tasks/tweets/", f"./tasks/tweets", type="bind"),
+        # Mount(
+        #     "/leggo-twitter-dados/data", f"{LEGGOTWITTER_FOLDERPATH}/data", type="bind"
+        # ),
+        Mount(
+            "/home/anderson/projects/pencil/parlametria/airflow/tasks/process_new_tweets",
+            "/airflow/tasks/process_new_tweets",
+            type="bind",
+        ),
     ]
 
     tasks_args = {
         "mounts": mounts,
         "trigger_rule": "all_done",
         "environment": {
-            "TWITTER_CREDENTIALS": twitter_credentials,
+            "NEW_TWEETS_FOLDERPATH": NEW_TWEETS_FOLDERPATH,
+            **TWITTER_CREDENTIALS,
         },
     }
 

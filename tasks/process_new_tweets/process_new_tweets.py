@@ -1,6 +1,7 @@
 from os import getenv
 from typing import List
 from airflow.providers.docker.operators.docker import DockerOperator
+from airflow.operators.bash_operator import BashOperator
 
 from docker.types import Mount
 
@@ -8,27 +9,20 @@ from docker.types import Mount
 def process_new_tweets_tasks(
     mounts: List[Mount], **extraoptions
 ) -> List[DockerOperator]:
-    # LEGGOTWITTER_FOLDERPATH = getenv("LEGGOTWITTER_FOLDERPATH")
-    URL_USERNAMES_TWITTER = getenv("URL_USERNAMES_TWITTER")
 
     t1 = DockerOperator(
         task_id="task_process_new_tweets",
-        # image="agoradigital/r-scrapper",
-        # image="feed-leggo-twitter-image",
-        image="python:3.8-slim-buster",
-        # container_name="process_tweets_tasks",
+        image=f"new_tweets",
+        container_name="process_new_tweets_tasks",
         api_version="auto",
         auto_remove=True,
         docker_url="unix://var/run/docker.sock",
-        # network_mode="bridge",
         network_mode="bridge",
         mounts=mounts,
+        mount_tmp_dir=False,
         command=f"""
-            echo 'hello docker'
+            python main.py --user users.txt --search search.txt
         """,
-        # command=f"""
-        #     python -V"
-        # """,
         **extraoptions,
     )
 

@@ -2,6 +2,7 @@ SHELL := /bin/bash
 
 # =========================== DEV DOCKER COMMANDS ===============================
 dev-build:
+	docker build -f tasks/process_new_tweets/Dockerfile -t new_tweets tasks/process_new_tweets/
 	docker-compose build
 
 dev-webserver:
