@@ -10,6 +10,17 @@ Esse README irá descrever como fazer o settup do ambiente do airflow.
 
 - Crie um arquivo chamado .env e cole nele as variáveis do .env.example, os valores são os mesmos utilizados pelo [leggo-geral](https://github.com/parlametria/leggo-geral);
 - Crie um arquivo .env.leggo-twitter-dados, os valores são os mesmo do repositório [leggo-twitter-dados](https://github.com/parlametria/leggo-twitter-dados)
+- Há uma variável que não está no [leggo-geral](https://github.com/parlametria/leggo-geral), a LEGGO_HOME_FOLDERPATH, essa variável é o caminho global até a pasta acima do airflow, ex:
+    ```text
+    LEGGO_HOME_FOLDERPATH=/home/user/parlametria/
+
+    ├── parlametria/
+    │   ├── airflow/
+    │   ├── leggoR/
+    │   ├── leggo-twitter/
+    │   ├── leggo-twitter-dados/
+    │   ├── ...
+    ```
 
 ## Pre-instalação
 

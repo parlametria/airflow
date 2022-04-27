@@ -2,13 +2,11 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 
-from docker.types import Mount
-
 from tasks.build_leggo_content import build_leggo_content_tasks
 from tasks.process_leggo_content import process_leggo_content_tasks
 from tasks.update_distancias_emendas import update_distancias_emendas_tasks
 
-from dags import execute_tasks_in_sequence
+from dags import execute_tasks_in_sequence, get_agora_digital_mounts
 
 default_args = {
     "owner": "airflow",
@@ -27,7 +25,7 @@ with DAG(
     schedule_interval="0 2 * * *",
     catchup=False,
 ) as dag:
-    mounts = [Mount("/agora-digital/leggo_data", "leggo_data")]
+    mounts = [*get_agora_digital_mounts()]
     tasks_args = {'mounts': mounts, 'trigger_rule': 'all_done'}
 
     tasks = [

@@ -2,10 +2,8 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 
-from docker.types import Mount
-
 from tasks.process_entidades import process_entidades_tasks
-from dags import execute_tasks_in_sequence
+from dags import execute_tasks_in_sequence, get_agora_digital_mounts
 
 default_args = {
     "owner": "airflow",
@@ -24,7 +22,7 @@ with DAG(
     schedule_interval="0 12 * * 6",  # Update parlamentares every friday at 12:00 UTC
     catchup=False,
 ) as dag:
-    mounts = [Mount("/agora-digital/leggo_data", "leggo_data")]
+    mounts = [*get_agora_digital_mounts()]
 
     tasks = [
         *process_entidades_tasks(mounts)
