@@ -1,29 +1,13 @@
-from os import getenv
 from typing import List
-from airflow.providers.docker.operators.docker import DockerOperator
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python_operator import PythonOperator
+from tasks.process_new_tweets.main import main
 
-from docker.types import Mount
+def process_new_tweets_tasks() -> List[PythonOperator]:
 
-
-def process_new_tweets_tasks(
-    mounts: List[Mount], **extraoptions
-) -> List[DockerOperator]:
-
-    t1 = DockerOperator(
-        task_id="task_process_new_tweets",
-        image=f"new_tweets",
-        container_name="process_new_tweets_tasks",
-        api_version="auto",
-        auto_remove=True,
-        docker_url="unix://var/run/docker.sock",
-        network_mode="bridge",
-        mounts=mounts,
-        mount_tmp_dir=False,
-        command=f"""
-            python main.py --user users.txt --search search.txt
-        """,
-        **extraoptions,
+    t1 = PythonOperator(
+        task_id="python_caller",
+        python_callable=main,
+        op_kwargs={'has_command': False},
     )
 
     return [t1]

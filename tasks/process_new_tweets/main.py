@@ -3,36 +3,38 @@ import logging
 import argparse
 import tweepy
 from dotenv import dotenv_values
-
-
-import os
-
-# to get the current working directory
-directory = os.getcwd()
-
-print("*" * 30)
-print(directory)
+from os import getenv
 
 
 class Parser:
-    def __init__(self):
-        parser = argparse.ArgumentParser()
-        # Add an argument
-        parser.add_argument("--users", type=str, required=True, help="user to searh")
-        parser.add_argument(
-            "--start", type=str, required=False, help="start date of tweets"
-        )
-        parser.add_argument(
-            "--end", type=str, required=False, help="end date of tweets"
-        )
-        parser.add_argument(
-            "--search", type=str, required=False, help="the text you want to search"
-        )
+    def __init__(self, has_command):
 
-        # Parse the argument
-        args = parser.parse_args()
+        if(has_command):
+                
+            parser = argparse.ArgumentParser()
+            # Add an argument
+            parser.add_argument("--users", type=str, required=True, help="user to searh")
+            parser.add_argument(
+                "--start", type=str, required=False, help="start date of tweets"
+            )
+            parser.add_argument(
+                "--end", type=str, required=False, help="end date of tweets"
+            )
+            parser.add_argument(
+                "--search", type=str, required=False, help="the text you want to search"
+            )
 
-        self.args = args
+            # Parse the argument
+            args = parser.parse_args()
+
+            self.args = args
+        else:
+            class Arguments:
+                users = 'users.txt'
+                search = 'search.txt'
+            
+            self.args = Arguments()
+
 
     def get_args(self):
         return vars(self.args)
@@ -63,19 +65,14 @@ class TweetsCSV:
 class Parlamentares:
     def __init__(self, pargs=None):
         self.args = pargs
+        self.FPATH = "/airflow/tasks/process_new_tweets/"
 
     def getSearchTags(self):
-        relator = "orlando"
-        registro = "2630/2020"
-        default = ["fake news", "fake", "news", relator, registro]
-        with open(self.args.get("search", default)) as search:
+        with open(self.args.get("search", f"{self.FPATH}search.txt")) as search:
             return [line.rstrip() for line in search]
 
     def getUsers(self, client):
-        felipeneto = "felipeneto"
-        jairbolsonaro = "jairbolsonaro"
-        marcelofreixo = "marcelofreixo"
-        with open(self.args.get("users", [jairbolsonaro, marcelofreixo])) as users:
+        with open(self.args.get("users", f"{self.FPATH}users.txt")) as users:
             return client.get_users(usernames=[line.rstrip() for line in users])
 
 
@@ -97,7 +94,7 @@ class Tweets:
 
         return sorted(found) if len(found) else None
 
-    def get_page(self, page, csv):
+    def get_page(self, page):
 
         for item in page:
             did_found = self.filterByList(item.text, self.tags.getSearchTags())
@@ -107,9 +104,8 @@ class Tweets:
                 print(did_found)
                 print(item.id)
                 print(item.text)
-                csv.write_tweets(item.id, item.text)
 
-    def get_users_tweets(self, csv):
+    def get_users_tweets(self):
         try:
 
             for response in tweepy.Paginator(
@@ -120,11 +116,7 @@ class Tweets:
             ):
                 # (ISO 8601/RFC 3339).
                 if response.data:
-                    print("Page response")
-                    print(response)
-                    print("end response")
-
-                    self.get_page(response.data, csv)
+                    self.get_page(response.data)
         except Exception as e:
             print(e)
 
@@ -142,50 +134,26 @@ class Logger:
     print("Start")
 
 
-def main() -> None:
-    config = dotenv_values(f".env")
-
-    # API_KEY = config["API_KEY"]
-    # API_SECRET = config["API_SECRET"]
-    BEARER_TOKEN = config["BEARER_TOKEN"]
-
-    # parser = Parser()
+def main(has_command=False) -> None:
+    # config = dotenv_values(f".env")
+    # BEARER_TOKEN = config["BEARER_TOKEN"]
+    BEARER_TOKEN = getenv("BEARER_TOKEN")
+    parser = Parser(has_command)
     client = tweepy.Client(BEARER_TOKEN)
 
-    # parlamentares = Parlamentares(pargs=parser.get_args())
-    # users = parlamentares.getUsers(client)
+    parlamentares = Parlamentares(pargs=parser.get_args())
+    users = parlamentares.getUsers(client)
 
-    # for user in users.data:
+    for user in users.data:
 
-    #     print("\n\n\n")
-    #     print("-" * 40)
-    #     csv = TweetsCSV(user.username)
-    #     csv.open_file()
-    #     print(user.username)
-    #     parlamentar = Tweets(user, client, parser.get_args(), parlamentares)
-    #     parlamentar.get_users_tweets(csv)
-
-    response = client.search_recent_tweets("Tweepy")
-    # The method returns a Response object, a named tuple with data, includes,
-    # errors, and meta fields
-    print(response.meta)
-
-    # In this case, the data field of the Response returned is a list of Tweet
-    # objects
-    tweets = response.data
-
-    # Each Tweet object has default ID and text fields
-    for tweet in tweets:
-        print(tweet.id)
-        print(tweet.text)
-        print(type(tweet))
-
-    # By default, this endpoint/method returns 10 results
-    # You can retrieve up to 100 Tweets by specifying max_results
-    response = client.search_recent_tweets("Tweepy", max_results=100)
+        print("\n\n\n")
+        print("-" * 40)
+        print(user.username)
+        parlamentar = Tweets(user, client, parser.get_args(), parlamentares)
+        parlamentar.get_users_tweets()
 
     return 1
 
 
 if __name__ == "__main__":
-    main()
+    main(has_command=True)
