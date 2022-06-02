@@ -17,10 +17,9 @@ default_args = {
 with DAG(
     "process_new_tweets",
     default_args=default_args,
-    schedule_interval="0 22 * * *",  # Run tweets fetcher 22:00 UTC
+    schedule_interval=None,  # Run tweets fetcher 22:00 UTC
     catchup=False,
 ) as dag:
-    
 
     tasks = [*process_new_tweets_tasks()]
 
