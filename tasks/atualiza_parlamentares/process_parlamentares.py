@@ -1,6 +1,4 @@
 import csv
-import requests
-import json
 
 from typing import Tuple
 from itertools import chain
@@ -8,39 +6,26 @@ from itertools import chain
 from tasks.atualiza_parlamentares.fetch_deputados import fetch_deputados
 from tasks.atualiza_parlamentares.fetch_senadores import fetch_senadores
 from tasks.atualiza_parlamentares.schemas import (
-    json_to_deputado,
-    json_to_senador,
-    Parlamentar,
+    deputado_json_to_parlamentar,
+    senador_json_to_parlamentar,
 )
-
-
-CAMARA = "camara"
-SENADO = "senado"
-DEPUTADOS_PATH = "/api/v2/deputados"
-CAMARA_API_LINK = "https://dadosabertos.camara.leg.br"
-SENADO_API_LINK = "https://legis.senado.leg.br"
-
-
-def format_deputado_data(deputado):
-    deputado["nome_civil"] = deputado["nome_civil"].title()
-    return deputado
 
 
 def process_deputados(legs: Tuple[str]):
     for data in fetch_deputados(legs):
-        yield json_to_deputado(data)
+        yield deputado_json_to_parlamentar(data)
 
 
 def process_senadores(legs: Tuple[str]):
     for data in fetch_senadores(legs):
-        yield json_to_senador(data)
+        yield senador_json_to_parlamentar(data)
 
 
 def process_parlamentares(legs: Tuple[str]):
     deputados = process_deputados(legs)
     senadores = process_senadores(legs)
 
-    # join deputados and senadores as a singled parlamentar iterator
+    # join deputados and senadores as a single parlamentar iterator
     return chain(deputados, senadores)
 
 

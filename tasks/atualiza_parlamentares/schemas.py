@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict
 
+from tasks.atualiza_parlamentares.constants import CAMARA, SENADO
+
 
 @dataclass
 class Parlamentar:
@@ -18,12 +20,12 @@ class Parlamentar:
     em_exercicio: int
 
 
-def json_to_deputado(json: Dict):
+def deputado_json_to_parlamentar(json: Dict):
     return Parlamentar(
         legislatura=json["legislatura"],
         id_parlamentar=str(json["id"]),
         id_parlamentar_parlametria="1" + str(json["id"]),
-        casa="camara",
+        casa=CAMARA,
         nome_eleitoral=json["ultimoStatus"]["nomeEleitoral"].title(),
         nome_civil=json["nomeCivil"].title(),
         cpf=json["cpf"],
@@ -35,7 +37,7 @@ def json_to_deputado(json: Dict):
     )
 
 
-def json_to_senador(json: Dict):
+def senador_json_to_parlamentar(json: Dict):
     id_parlamentar = str(json["IdentificacaoParlamentar"]["CodigoParlamentar"])
     primeira_legis = json["Mandatos"]["Mandato"]["PrimeiraLegislaturaDoMandato"][
         "NumeroLegislatura"
@@ -49,7 +51,7 @@ def json_to_senador(json: Dict):
         legislatura=json["legislatura"],
         id_parlamentar=id_parlamentar,
         id_parlamentar_parlametria="2" + id_parlamentar,
-        casa="senado",
+        casa=SENADO,
         nome_eleitoral=json["IdentificacaoParlamentar"]["NomeParlamentar"],
         nome_civil=json["IdentificacaoParlamentar"]["NomeCompletoParlamentar"],
         cpf="NA",

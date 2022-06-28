@@ -7,6 +7,7 @@ from tasks.atualiza_parlamentares.constants import CAMARA_API_LINK, DEPUTADOS_PA
 
 
 def fetch_deputado(id: int):
+    print(f"\tBuscando deputado com id {id}")
     url = "".join([CAMARA_API_LINK, DEPUTADOS_PATH, "/", str(id)])
     response = requests.get(url)
     return response.json()
