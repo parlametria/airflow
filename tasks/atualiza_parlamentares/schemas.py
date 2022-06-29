@@ -19,6 +19,22 @@ class Parlamentar:
     situacao: str
     em_exercicio: int
 
+    def to_linedata(self):
+        return [
+            self.legislatura,
+            self.id_parlamentar,
+            self.id_parlamentar_parlametria,
+            self.casa,
+            self.nome_eleitoral,
+            self.nome_civil,
+            self.cpf,
+            self.sexo,
+            self.partido,
+            self.uf,
+            self.situacao,
+            self.em_exercicio,
+        ]
+
 
 def deputado_json_to_parlamentar(json: Dict):
     return Parlamentar(

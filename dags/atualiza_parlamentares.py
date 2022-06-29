@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 
-from tasks.atualiza_parlamentares import atualiza_parlamentares_tasks
+from tasks.atualiza_parlamentares.main import atualiza_parlamentares_tasks2
 
 from dags import execute_tasks_in_sequence, get_agora_digital_mounts
 
@@ -28,7 +28,7 @@ with DAG(
     ]
 
     tasks = [
-        *atualiza_parlamentares_tasks(mounts)
+        *atualiza_parlamentares_tasks2(mounts) # NOP
     ]
 
     execute_tasks_in_sequence(tasks)

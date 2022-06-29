@@ -17,7 +17,7 @@ def fetch_senadores_by_leg(id_leg: str) -> List[Dict]:
 
 
 def fetch_senadores(legs: Tuple[str]):
-    for leg in legs[:1]:
+    for leg in legs:
         print(f"Buscando senadores da legislatura {leg}")
         data = fetch_senadores_by_leg(leg)
 
