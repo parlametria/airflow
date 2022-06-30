@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Union
 
-from tasks.atualiza_parlamentares.constants import CAMARA, SENADO
+# from tasks.atualiza_parlamentares.constants import CAMARA, SENADO
+from .constants import CAMARA, SENADO
 
 
 @dataclass
@@ -17,7 +18,7 @@ class Parlamentar:
     partido: str
     uf: str
     situacao: str
-    em_exercicio: int
+    em_exercicio: Union[int, str]
 
     def to_linedata(self):
         return [
@@ -55,12 +56,15 @@ def deputado_json_to_parlamentar(json: Dict):
 
 def senador_json_to_parlamentar(json: Dict):
     id_parlamentar = str(json["IdentificacaoParlamentar"]["CodigoParlamentar"])
-    primeira_legis = json["Mandatos"]["Mandato"]["PrimeiraLegislaturaDoMandato"][
-        "NumeroLegislatura"
-    ]
-    segunda_legs = json["Mandatos"]["Mandato"]["SegundaLegislaturaDoMandato"][
-        "NumeroLegislatura"
-    ]
+    mandato = (
+        json["Mandatos"]["Mandato"][0]
+        if type(json["Mandatos"]["Mandato"]) == list
+        else json["Mandatos"]["Mandato"]
+    )
+
+    primeira_legis = mandato["PrimeiraLegislaturaDoMandato"]["NumeroLegislatura"]
+    segunda_legs = mandato["SegundaLegislaturaDoMandato"]["NumeroLegislatura"]
+
     em_exercicio = 1 if json["legislatura"] in (primeira_legis, segunda_legs) else 0
 
     return Parlamentar(
@@ -68,12 +72,18 @@ def senador_json_to_parlamentar(json: Dict):
         id_parlamentar=id_parlamentar,
         id_parlamentar_parlametria="2" + id_parlamentar,
         casa=SENADO,
-        nome_eleitoral=json["IdentificacaoParlamentar"]["NomeParlamentar"],
-        nome_civil=json["IdentificacaoParlamentar"]["NomeCompletoParlamentar"],
+        nome_eleitoral=dict.get(
+            json["IdentificacaoParlamentar"], "NomeParlamentar", "NA"
+        ),
+        nome_civil=dict.get(
+            json["IdentificacaoParlamentar"], "NomeCompletoParlamentar", "NA"
+        ),
         cpf="NA",
-        sexo=json["IdentificacaoParlamentar"]["SexoParlamentar"][0],
-        partido=json["IdentificacaoParlamentar"]["SiglaPartidoParlamentar"],
-        uf=json["Mandatos"]["Mandato"]["UfParlamentar"],
-        situacao=json["Mandatos"]["Mandato"]["DescricaoParticipacao"],
+        sexo=dict.get(json["IdentificacaoParlamentar"], "SexoParlamentar")[0] or "NA",
+        partido=dict.get(
+            json["IdentificacaoParlamentar"], "SiglaPartidoParlamentar", "NA"
+        ),
+        uf=dict.get(mandato, "UfParlamentar", "NA"),
+        situacao=dict.get(mandato, "DescricaoParticipacao", "NA"),
         em_exercicio=em_exercicio,
     )

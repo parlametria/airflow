@@ -1,0 +1,12 @@
+setup.cfg
+setup.py
+./src/__init__.py
+./src/constants.py
+./src/fetch_deputados.py
+./src/fetch_senadores.py
+./src/process_parlamentares.py
+./src/schemas.py
+atualiza_parlamentares.egg-info/PKG-INFO
+atualiza_parlamentares.egg-info/SOURCES.txt
+atualiza_parlamentares.egg-info/dependency_links.txt
+atualiza_parlamentares.egg-info/top_level.txt

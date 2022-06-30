@@ -1,10 +1,9 @@
 import requests
 import json
 
-# from functools import lru_cache
 from typing import List, Tuple, Dict
 
-from tasks.atualiza_parlamentares.constants import SENADO_API_LINK, SENADORES_PATH
+from .constants import SENADO_API_LINK, SENADORES_PATH
 
 
 def fetch_senadores_by_leg(id_leg: str) -> List[Dict]:
@@ -23,7 +22,7 @@ def fetch_senadores(legs: Tuple[str]):
 
         for senador in data["ListaParlamentarLegislatura"]["Parlamentares"][
             "Parlamentar"
-        ][:1]:
+        ]:
             # print(json.dumps(senador, indent=4, sort_keys=True))
             senador["legislatura"] = leg
             yield senador

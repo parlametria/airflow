@@ -3,8 +3,7 @@ import json
 
 from typing import List, Iterable, Tuple, Dict
 
-from tasks.atualiza_parlamentares.constants import CAMARA_API_LINK, DEPUTADOS_PATH
-
+from .constants import CAMARA_API_LINK, DEPUTADOS_PATH
 
 def fetch_deputado(id: int):
     print(f"\tBuscando deputado com id {id}")
@@ -24,7 +23,7 @@ def fetch_deputados(legs: Tuple[str]):
         print(f"Buscando deputados da legislatura {leg}")
         data = fetch_deputados_by_leg(leg)
 
-        for row in data["dados"][:1]:
+        for row in data["dados"]:
             data = fetch_deputado(row["id"])
             data["dados"]["legislatura"] = leg
 

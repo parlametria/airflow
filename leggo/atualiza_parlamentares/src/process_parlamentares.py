@@ -3,9 +3,17 @@ import csv
 from typing import Tuple, Generator, List
 from tempfile import TemporaryFile
 
-from tasks.atualiza_parlamentares.fetch_deputados import fetch_deputados
-from tasks.atualiza_parlamentares.fetch_senadores import fetch_senadores
-from tasks.atualiza_parlamentares.schemas import (
+#from tasks.atualiza_parlamentares.fetch_deputados import fetch_deputados
+#from tasks.atualiza_parlamentares.fetch_senadores import fetch_senadores
+#from tasks.atualiza_parlamentares.schemas import (
+#    deputado_json_to_parlamentar,
+#    senador_json_to_parlamentar,
+#    Parlamentar,
+#)
+
+from .fetch_deputados import fetch_deputados
+from .fetch_senadores import fetch_senadores
+from .schemas import (
     deputado_json_to_parlamentar,
     senador_json_to_parlamentar,
     Parlamentar,
@@ -56,7 +64,6 @@ def join_parlamentares_by_leg(
 def process_parlamentares(legs: Tuple[str]) -> List[Parlamentar]:
     deputados = process_deputados(legs)
     senadores = process_senadores(legs)
-
     return join_parlamentares_by_leg(legs, deputados, senadores)
 
 
