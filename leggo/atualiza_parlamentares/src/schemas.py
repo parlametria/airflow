@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Dict, Union
 
-# from tasks.atualiza_parlamentares.constants import CAMARA, SENADO
 from .constants import CAMARA, SENADO
 
 

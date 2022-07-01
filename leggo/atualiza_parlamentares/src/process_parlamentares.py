@@ -3,13 +3,6 @@ import csv
 from typing import Tuple, Generator, List
 from tempfile import TemporaryFile
 
-#from tasks.atualiza_parlamentares.fetch_deputados import fetch_deputados
-#from tasks.atualiza_parlamentares.fetch_senadores import fetch_senadores
-#from tasks.atualiza_parlamentares.schemas import (
-#    deputado_json_to_parlamentar,
-#    senador_json_to_parlamentar,
-#    Parlamentar,
-#)
 
 from .fetch_deputados import fetch_deputados
 from .fetch_senadores import fetch_senadores
